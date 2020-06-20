@@ -1,0 +1,75 @@
+@media print {
+	body * {
+		font-size: 6pt !important;
+	}
+	table.left {
+		display: block;
+		float:left;
+		margin-right: 5em;
+	}
+
+	table.right {
+		display: block;
+		float:left;
+	}
+
+	h1 {
+		font-size: 12pt !important;
+	}
+}
+
+
+@media screen {
+	table {
+		width: 60em;
+	}
+
+}
+
+
+
+body {
+	background-color: white;
+	font-family: sans-serif;
+}
+
+
+form {
+	margin-left: -200px;
+}
+
+#rfidfield {
+
+}
+
+
+
+table { 
+   border-spacing: 0;
+ }
+
+table tr td, table tr th {
+	border: 1px solid grey;
+	padding: 3px;
+	margin:0;
+}
+td h2 {
+	margin-bottom:0;
+	margin-top: 1ex;
+}
+tr.area td {
+	background-color: #abc;
+}
+
+tr.subhead th {
+	background-color: black;
+	color: white;
+	padding: 3px 6px 3px 6px;
+}
+
+td.level {
+	font-weight: bold;
+	text-align: center;
+}
+
+td { padding: 2px 4px 2px 4px; }

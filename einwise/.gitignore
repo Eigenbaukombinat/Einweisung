@@ -1,0 +1,5 @@
+collmex.ini
+db.sqlite3
+__pycache__/
+*.pyc
+bestandsdaten.csv

@@ -1,0 +1,62 @@
+{% load static %}
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href='{% static "einweisungen/main.css" %}'>
+    <script type="text/javascript">
+    	window.onload = function() {
+  document.getElementById("rfidfield").focus();
+};
+    </script>
+
+
+</head>
+
+<body>
+	{% if error %}
+		<h3>Fehler: {{ error }}</h3>
+	{% endif %}
+
+
+	{% if not member %}
+
+	<h3>Bitte Karte auflegen!</h3>
+	<form action=".">
+		<input type="text" id="rfidfield" name="rfid" />
+	</form>
+
+	{% else %}
+
+    <h1>Einweisungen für {{ member.name }}</h1>
+
+<p> Stand: <strong>{{ today|date:"d.m.Y" }}</strong><br/>
+    <i>X = Einweisung erhalten; F = Fortgeschrittene Kenntnisse; E = Darf einweisen</i>
+</p>
+	
+	{% for side, table in areas %}
+	<table class="{{side}}">
+		<tbody>
+			{% for area_name, einweisables in table %}
+			<tr class="area">
+				<td colspan=4><h2>{{area_name}}</h2></td>
+			</tr>
+			<tr class="subhead">
+				<th>Einweisungsgegenstand</th>
+				<th class="level">Level</th>
+				<th>erhalten</th>
+				<th>von</th>
+			</tr>
+				{% for einweisable, einweisung in einweisables %}
+				<tr>
+					<td>{{ einweisable.name }}</td>
+					<td class="level">{{ einweisung.level }}</td>
+					<td>{{ einweisung.issue_date|date:"d.m.Y" }}</td>
+					<td>{{ einweisung.instructor }}</td>
+				</tr>
+				{% endfor %}
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endfor %}
+	{% endif %}
+</body>
+</html>
