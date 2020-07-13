@@ -25,7 +25,7 @@ SECRET_KEY = 'hbr3wuk45zoi74itzwsSAGoesGutclkuDyshgykuhh'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['einweisungen.eigenbaukombinat.de']
 
 
 # Application definition

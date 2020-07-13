@@ -1,5 +1,6 @@
 collmex.ini
 db.sqlite3
+db.sqlite3_init
 __pycache__/
 *.pyc
 bestandsdaten.csv

@@ -2,11 +2,13 @@ from django.http import HttpResponse
 from einweisungen.models import Einweisung, Member, Area, Einweisable
 from django.template import loader
 import datetime
+from django.contrib.auth.decorators import permission_required
 
 
 class NonEinweisung(object):
     issue_date = ''
 
+@permission_required('einweisungen.view_all')
 def index(request):
     rfid = request.GET.get('rfid')
     error = False
