@@ -11,17 +11,22 @@ class NonEinweisung(object):
 @permission_required('einweisungen.view_all')
 def index(request):
     rfid = request.GET.get('rfid')
+    memid = request.GET.get('memid')
     error = False
     mem = None
-    if rfid:
+    if rfid or memid:
         try:
-            mems = Member.objects.filter(rfid=rfid)
+            if rfid:
+                mems = Member.objects.filter(rfid=rfid)
+            elif memid:
+                mems = Member.objects.filter(member_id=memid)
             if len(mems) != 1:
                 error = 'More than 1 member found.'
             else:
                 mem = mems[0]
         except Member.DoesNotExist:
             error = 'Member not found.'
+
 
     if mem:
         einweisungen = Einweisung.objects.filter(member=mem)

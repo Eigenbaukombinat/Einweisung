@@ -30,7 +30,12 @@ class Command(BaseCommand):
                     member_id=collmex_id,
                     name=f"{mem.get('Vorname')} {mem.get('Name')}")
 
-            db_mem.is_active = is_active(mem)
+            if not is_active(mem):
+                db_mem.is_active = False
+                db_mem.name = 'ausgetreten'
+            else:
+                db_mem.is_active = True
+                db_mem.name = f"{mem.get('Vorname')} {mem.get('Name')}" 
             #fetch rfid from collmex "bemerkungen" field"""
             mconfig = configparser.ConfigParser()
             try:

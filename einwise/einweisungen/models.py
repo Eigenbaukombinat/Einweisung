@@ -59,4 +59,7 @@ class Einweisung(models.Model):
 
     class Meta:
         verbose_name_plural = "Einweisungen"
+        permissions = [
+            ("view_all", "View all einweisungen"),
+        ]
         unique_together = (('einweisable', 'member', 'level'),)
