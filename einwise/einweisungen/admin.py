@@ -1,6 +1,17 @@
 from django.contrib import admin
 from .models import Area, Member, Einweisable, Einweisung
-from admin_searchable_dropdown.filters import AutocompleteFilterFactory
+from admin_searchable_dropdown.filters import AutocompleteFilterFactory, AutocompleteFilter
+from .views import MembersearchView
+from django.urls import path
+from django.shortcuts import reverse
+
+
+class MemberFilter(AutocompleteFilter):
+    title = 'Member'
+    field_name = 'member'
+
+    def get_autocomplete_url(self, request, model_admin):
+        return reverse('admin:member_search')
 
 
 class EinweisungAdmin(admin.ModelAdmin):
@@ -9,16 +20,18 @@ class EinweisungAdmin(admin.ModelAdmin):
 
     autocomplete_fields = ['member', 'einweisable']
     list_filter = ['level',
-        AutocompleteFilterFactory('Mitglied', 'member'),
+        MemberFilter,
         AutocompleteFilterFactory('Einweisable', 'einweisable')]
     search_fields = ['member__name', 'einweisable__name']
 
     
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name in ("member", "instructor"):
-            kwargs["queryset"] = Member.objects.filter(is_active=True).order_by("name")
-        
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('custom_search/', self.admin_site.admin_view(MembersearchView.as_view(model_admin=self)),
+                 name='member_search'),
+        ]
+        return custom_urls + urls
 
 
 class MemberAdmin(admin.ModelAdmin):

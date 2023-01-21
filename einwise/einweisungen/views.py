@@ -4,6 +4,19 @@ from django.template import loader
 import datetime
 from django.contrib.auth.decorators import permission_required
 
+from admin_searchable_dropdown.views import AutocompleteJsonView
+
+
+class MembersearchView(AutocompleteJsonView):
+    model_admin = None
+    def get_queryset(self):
+        """
+           your custom logic goes here.
+        """
+        queryset = Member.objects.filter(is_active=True).order_by('name')
+        return queryset
+
+
 
 class NonEinweisung(object):
     issue_date = ''
