@@ -33,6 +33,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 INSTALLED_APPS = [
     'einweisungen.apps.EinweisungenConfig',
+
+    'admin_searchable_dropdown',
+    'admin_auto_filters',
+    'django_admin_listfilter_dropdown',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
