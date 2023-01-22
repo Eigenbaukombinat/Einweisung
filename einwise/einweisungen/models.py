@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import m2m_changed
+from django.db import transaction
 
 
 einweisung_level_choices = (
@@ -64,3 +66,23 @@ class Einweisung(models.Model):
             ("view_all", "View all einweisungen"),
         ]
         unique_together = (('einweisable', 'member', 'level'),)
+
+
+class Multieinweisung(models.Model):
+    einweisable = models.ForeignKey(Einweisable, on_delete=models.CASCADE)
+    members = models.ManyToManyField(Member)
+    level = models.CharField(max_length=1, choices=einweisung_level_choices)
+    instructor = models.ForeignKey(Member,
+        related_name="multieinweisung_instructor", on_delete=models.CASCADE)
+    issue_date = models.DateField()
+
+    def __str__(self):
+        return (f"{self.instructor.name}: "
+                f"{self.einweisable.name} ({self.issue_date})")
+
+    class Meta:
+        verbose_name_plural = "Multi-Einweisungen"
+        permissions = [
+            ("view_all", "View all einweisungen"),
+        ]
+

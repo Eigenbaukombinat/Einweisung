@@ -1,10 +1,11 @@
 from django.contrib import admin
-from .models import Area, Member, Einweisable, Einweisung
+from .models import Area, Member, Einweisable, Einweisung, Multieinweisung
 from admin_searchable_dropdown.filters import AutocompleteFilterFactory, AutocompleteFilter
 from .views import MembersearchView
 from django.urls import path
 from django.shortcuts import reverse
-
+from django.db.utils import IntegrityError
+from django.contrib import messages
 
 class MemberFilter(AutocompleteFilter):
     title = 'Member'
@@ -34,11 +35,39 @@ class EinweisungAdmin(admin.ModelAdmin):
         return custom_urls + urls
 
 
+@admin.action(description='Generate Einweisungen')
+def create_einweisungen(modeladmin, request, queryset):
+    for multieinweisung in queryset.all():
+        error = False
+        for mem in multieinweisung.members.all():
+            e = Einweisung()
+            e.member = mem
+            e.einweisable = multieinweisung.einweisable
+            e.level = multieinweisung.level
+            e.issue_date = multieinweisung.issue_date
+            e.instructor = multieinweisung.instructor
+            try:
+                e.save()
+            except IntegrityError:
+                messages.error(request, f"Einweisung {mem.name} für {multieinweisung.einweisable} existiert schon.")
+                error = True
+                break
+        if not error:
+            multieinweisung.delete()
+
+class MultieinweisungAdmin(admin.ModelAdmin):
+    list_display = ('einweisable', 'instructor', 'issue_date')
+
+    autocomplete_fields = ["members", "instructor", "einweisable"]
+    actions = [create_einweisungen]
+
 class MemberAdmin(admin.ModelAdmin):
     list_display = ('member_id', 'name', 'is_active')
     list_filter = ['is_active']
     ordering = ('member_id',)
     search_fields = ['name']
+
+
 
 
 class EinweisableAdmin(admin.ModelAdmin):
@@ -52,3 +81,6 @@ admin.site.register(Member, MemberAdmin)
 admin.site.register(Einweisable, EinweisableAdmin)
 admin.site.register(Area)
 admin.site.register(Einweisung, EinweisungAdmin)
+admin.site.register(Multieinweisung, MultieinweisungAdmin)
+
+
