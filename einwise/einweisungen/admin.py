@@ -79,8 +79,9 @@ class MemberAdmin(admin.ModelAdmin):
     def get_queryset(self, req):
         #check url here, only do for autocomplete, as
         #this is called for list view also
+        qs = super().get_queryset(req)
         if 'autocomplete' in req.get_full_path():
-            qs = super().get_queryset(req).filter(is_active=True)
+            qs = qs.filter(is_active=True)
         return qs
 
 class EinweisableAdmin(admin.ModelAdmin):
