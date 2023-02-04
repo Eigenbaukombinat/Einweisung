@@ -25,13 +25,6 @@ class EinweisungAdmin(admin.ModelAdmin):
         MemberFilter,
         AutocompleteFilterFactory('Einweisable', 'einweisable')]
     search_fields = ['member__name', 'einweisable__name']
-
-    def get_search_results(self, request, queryset, search_term):
-        queryset, may_have_duplicates = super().get_search_results(
-            request, queryset, search_term,
-        )
-        queryset |= self.model.objects.filter(member__is_active=False)
-        return queryset, may_have_duplicates
     
     def get_urls(self):
         urls = super().get_urls()
