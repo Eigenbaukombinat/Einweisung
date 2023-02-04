@@ -17,7 +17,6 @@ class MembersearchView(AutocompleteJsonView):
         return queryset
 
 
-
 class NonEinweisung(object):
     issue_date = ''
 

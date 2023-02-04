@@ -7,6 +7,7 @@ from django.shortcuts import reverse
 from django.db.utils import IntegrityError
 from django.contrib import messages
 
+
 class MemberFilter(AutocompleteFilter):
     title = 'Member'
     field_name = 'member'
@@ -19,20 +20,28 @@ class EinweisungAdmin(admin.ModelAdmin):
     list_display = ('member', 'level',  'einweisable', 'instructor', 
                     'issue_date')
 
-    autocomplete_fields = ['member', 'einweisable']
+    autocomplete_fields = ['member', 'instructor', 'einweisable']
     list_filter = ['level',
         MemberFilter,
         AutocompleteFilterFactory('Einweisable', 'einweisable')]
     search_fields = ['member__name', 'einweisable__name']
 
+    def get_search_results(self, request, queryset, search_term):
+        queryset, may_have_duplicates = super().get_search_results(
+            request, queryset, search_term,
+        )
+        queryset |= self.model.objects.filter(member__is_active=False)
+        return queryset, may_have_duplicates
     
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
-            path('custom_search/', self.admin_site.admin_view(MembersearchView.as_view(model_admin=self)),
+            path('member_search/', self.admin_site.admin_view(MembersearchView.as_view(model_admin=self)),
                  name='member_search'),
         ]
         return custom_urls + urls
+
+
 
 
 @admin.action(description='Generate Einweisungen')
@@ -67,8 +76,12 @@ class MemberAdmin(admin.ModelAdmin):
     ordering = ('member_id',)
     search_fields = ['name']
 
-
-
+    def get_queryset(self, req):
+        #check url here, only do for autocomplete, as
+        #this is called for list view also
+        if 'autocomplete' in req.get_full_path():
+            qs = super().get_queryset(req).filter(is_active=True)
+        return qs
 
 class EinweisableAdmin(admin.ModelAdmin):
     list_display = ('name', 'area', 'etype')
