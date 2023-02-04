@@ -54,7 +54,7 @@ class Einweisung(models.Model):
         related_name="einweisung_instructor", on_delete=models.CASCADE)
     level = models.CharField(max_length=1, choices=einweisung_level_choices)
     issue_date = models.DateField()
-    comment = models.TextField(null=True)
+    comment = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return (f"{self.member.name}: {self.level} "
